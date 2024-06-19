@@ -1,0 +1,7 @@
+.gameboard{
+    background-color: grey;
+    height: 300px;
+    width: 300px;
+    display: grid;
+    grid-template: repeat(3, 100px) / repeat(3, 100px);
+}
