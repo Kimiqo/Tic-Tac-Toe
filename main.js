@@ -1,75 +1,117 @@
 
 console.log("Tic Tac Toe");
 
+//gameboard
 const Gameboard = {
-    board : [
-    ["","",""],
-    ["","",""],
-    ["","",""]]
+    board : ["","","","","","","","",""]
 }
-console.log(Gameboard.board);
 
-// const gameboard = document.getElementsByClassName("gameboard");
-// const f1 = document.getElementById("f1");
-// const f2 = document.getElementById("f2");
-// const f3 = document.getElementById("f3");
-// const f4 = document.getElementById("f4");
-// const f5 = document.getElementById("f5");
-// const f6 = document.getElementById("f6");
-
-
-function player(name, type){
-    const p_name = name;
-    const p_type = type;
-
-    return {p_name, p_type};
+//players
+function createPlayer(name, type){
+    return {name, type};
 }
-const player1 = player("P1","X");
-const player2 = player("P2","O");
+
+//reload page
+const reloadPage = document.getElementById("restart");
+reloadPage.addEventListener("click",()=>{
+    location.reload();
+})
 
 
-console.log(player1.p_name,player1.p_type);
-console.log(player2.p_name,player2.p_type);
+//start button
+const btn_start = document.getElementById("start");
+btn_start.addEventListener("click",()=>{
+    playGame.start();
+})
 
-function playGame(){};
+//tiles
+const cells = document.querySelectorAll("#cell");
+cells.forEach(cell => cell.innerHTML = "");
+
+//winner message
+const winner = document.getElementById("winner");
+
+//game function
+const playGame = (function (){
+    let players = [];
+    let currentPlayerIndex;
+    let gameOver;
+
+    const start = () => {
+        players = [
+            createPlayer(document.getElementById("player_1").value, "X"),
+            createPlayer(document.getElementById("player_2").value, "O"),
+        ]
+        currentPlayerIndex = 0;
+        gameOver = false;
+
+        
+
+        cells.forEach(cell => cell.addEventListener("click", () => {
+            //check if cell is empty
+            if(cell.innerHTML == "X" || cell.innerHTML == "O"){
+                return;
+            }else{
+                if (gameOver){
+                    btn_start.disabled = true;
+                    return;
+                }
+                
+                //choose cell
+                cell.innerHTML = players[currentPlayerIndex].type;
+                Gameboard.board[cell.className] = players[currentPlayerIndex].type; 
+                console.log(Gameboard.board);
+
+                //check winner after play
+                gameOver = checkWinner(players,currentPlayerIndex);
+                console.log(gameOver);
+                
+
+                //change player
+                if(currentPlayerIndex == 0){
+                    console.log("X's turn");
+                    currentPlayerIndex = 1;
+                }else if(currentPlayerIndex == 1){
+                    console.log("O's turn");
+                    currentPlayerIndex = 0;
+                }
+            }
+        }));
+    };
+
+    return {start};
+})();
 
 
-function checkWin(array){
-    //who won
-    function win_player(){
-        if (array[0][0] === "X" || array[0][1] === "X" || array[0][1] === "X" || array[1][0] === "X" || array[2][0] === "X"){
-            console.log("Player 1 wins");
-        }else if (array[0][0] === "O" || array[0][1] === "O" || array[0][1] === "O" || array[1][0] === "O" || array[2][0] === "O"){
-            console.log("Player 2 wins");
+
+function checkWinner(array,index){
+    const winCondition = [
+        //rows
+        [0,1,2],
+        [3,4,5],
+        [6,7,8],
+        //columns
+        [0,3,6],
+        [1,4,7],
+        [2,5,8],
+        //diagonal
+        [0,4,8],
+        [2,4,6]
+    
+    ];
+
+    let roundWon = false;
+
+    for (let i=0; i<winCondition.length;i++){
+        const condition = winCondition[i];
+        const cellA = Gameboard.board[condition[0]];
+        const cellB = Gameboard.board[condition[1]];
+        const cellC = Gameboard.board[condition[2]];
+
+        if(cellA === cellB && cellB === cellC && cellA !== ""){
+            winner.innerHTML = `Winner: ${array[index].name}`;
+            roundWon = true;
+            return roundWon;
         }
     }
-    //diagonal win
-    if (array[0][0] === array[1][1] === array[2][2] ){
-        win_player();
-    }
-    //1st row win
-    if (array[0][0] === array[0][1] === array[0][2] ){
-        win_player();
-    }
-    //2nd row win
-    if (array[1][0] === array[1][1] === array[1][2] ){
-        win_player();
-    }
-    //3rd row win
-    if (array[2][0] === array[2][1] === array[2][2] ){
-        win_player();
-    }
-    //1st column win
-    if (array[0][0] === array[1][0] === array[2][0] ){
-        win_player();
-    }
-    //2nd column win
-    if (array[0][1] === array[1][1] === array[2][1] ){
-        win_player();
-    }
-    //3rd column win
-    if (array[0][2] === array[1][2] === array[2][2] ){
-        win_player();
-    }
-
-};
+}

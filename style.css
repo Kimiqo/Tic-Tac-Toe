@@ -1,7 +1,16 @@
 .gameboard{
-    background-color: grey;
+    background-color: white;
     height: 300px;
     width: 300px;
     display: grid;
     grid-template: repeat(3, 100px) / repeat(3, 100px);
+}
+
+#cell{
+    border: 1px solid black;
+    font-size: 42px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
